@@ -1,0 +1,39 @@
+FROM ubuntu:14.04
+MAINTAINER Ayoubensalem 
+LABEL Description="Dockerfile for mean app"
+
+# Exposing PORTS : 3000(Nodejs), 27017(MongoDB), 35279(LiveReload)
+EXPOSE 3000 27017 35279 4200
+
+# install pre-requisites and essential packaes 
+RUN apt-get -q update && apt-get install -y -qq \
+	git \
+	curl \
+	ssh \
+	gcc \
+	make \
+	build-essential \
+	sudo \
+	apt-utils \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install Nodejs
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
+	&& apt-get install -y -q nodejs \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN npm install --quiet -g bower gulp \
+	&& npm cache clean 
+
+RUN mkdir -p /home/neo/Desktop/app
+WORKDIR /home/neo/Desktop/app
+
+RUN git clone https://github.com/linnovate/mean.git /home/neo/Desktop/app
+
+RUN npm install --quiet \
+	&& npm cache clean 
+RUN apt-get install vim 
+#CMD ["npm", "start"]
+
+
